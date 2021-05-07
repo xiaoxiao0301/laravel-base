@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 
 class SessionsController extends Controller
 {
@@ -43,7 +44,9 @@ class SessionsController extends Controller
     public function destroy()
     {
         Auth::logout();
+        $rememberMeCookie = Auth::getRecallerName();
+        $cookie = Cookie::forget($rememberMeCookie);
         session()->flash('success', '您已成功退出!');
-        return redirect()->route('login');
+        return redirect()->route('login')->withCookie($cookie);
     }
 }
