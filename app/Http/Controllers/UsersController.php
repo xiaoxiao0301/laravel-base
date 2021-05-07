@@ -8,6 +8,17 @@ use Illuminate\Support\Facades\Auth;
 
 class UsersController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth', [
+            'except' => ['show', 'create', 'store']
+        ]);
+        // 只让未登录用户访问注册界面
+        $this->middleware('guest', [
+            'only' => 'create'
+        ]);
+    }
+
     /**
      * 注册页面
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -58,6 +69,7 @@ class UsersController extends Controller
      */
     public function edit(User $user)
     {
+        $this->authorize('update', $user);
         return view('users.edit', compact('user'));
     }
 
@@ -70,6 +82,8 @@ class UsersController extends Controller
      */
     public function update(User $user, Request $request)
     {
+        // 权限判断，如果修改了model的命名空间需要手动注册策略
+        $this->authorize('update', $user);
         $this->validate($request, [
             'name' => 'required|max:50',
             'password' => 'nullable|confirmed|min:6'

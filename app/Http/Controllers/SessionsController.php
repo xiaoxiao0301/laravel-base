@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\Cookie;
 
 class SessionsController extends Controller
 {
+    public function __construct()
+    {
+        // 只让未登录用户访问登录界面
+        $this->middleware('guest', [
+           'only' => ['create']
+        ]);
+    }
+
     /**
      * 登录页面
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -33,7 +41,9 @@ class SessionsController extends Controller
         // Auth::attempt(['email' => $request->email, 'password' => $request->password])
         if (Auth::attempt($credentials, $request->has('remember'))) {
             session()->flash('success', "欢迎回来!");
-            return redirect()->route('users.show', [Auth::user()]);
+            $fallback = route('users.show', Auth::user());
+            // 重定向到未登录之前的页面
+            return redirect()->intended($fallback);
         } else {
             session()->flash('danger', '很抱歉，您的邮箱和密码不匹配');
             return redirect()->back()->withInput();
