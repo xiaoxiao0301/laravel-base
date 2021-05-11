@@ -70,4 +70,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Status::class);
     }
+
+
+    /**
+     * 获取当前用户的所有微博
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function feed()
+    {
+        return $this->statuses()->orderBy('created_at', 'desc');
+    }
 }
