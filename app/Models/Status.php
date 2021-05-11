@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Status extends Model
 {
+    protected $fillable = ['content'];
+
     /**
      * 绑定模型关系，微博-用户，多对一
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
