@@ -123,6 +123,11 @@ class UsersController extends Controller
         return back();
     }
 
+    /**
+     * 激活账号
+     * @param $token
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function confirmEmail($token)
     {
         $user = User::where('activation_token', $token)->firstOrFail();
@@ -133,6 +138,28 @@ class UsersController extends Controller
         Auth::login($user);
         session()->flash('success', '恭喜你，激活成功');
         return redirect()->route('users.show', [$user]);
+    }
+
+    /**
+     * 关注列表
+     * @param User $user
+     */
+    public function followings(User $user)
+    {
+        $users = $user->followings()->paginate(30);
+        $title = $user->name . "关注的人";
+        return view('users.show_follow', compact('users', 'title'));
+    }
+
+    /**
+     * 粉丝列表
+     * @param User $user
+     */
+    public function followers(User $user)
+    {
+        $users = $user->followers()->paginate(30);
+        $title = $user->name . "的粉丝";
+        return view('users.show_follow', compact('users', 'title'));
     }
 
 
