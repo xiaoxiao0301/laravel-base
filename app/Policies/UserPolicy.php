@@ -52,6 +52,17 @@ class UserPolicy
             // 数据库使用的是mysql
             return ($currentUser->is_admin && $currentUser->id !== $user->id) ? Response::allow() : Response::deny('您无权限进行此项操作');
         }
+    }
 
+
+    /**
+     * 自己不能关注自己哦
+     * @param User $currentUser
+     * @param User $user
+     * @return bool
+     */
+    public function follow(User $currentUser, User $user)
+    {
+        return $currentUser->id !== $user->id;
     }
 }
